@@ -1,0 +1,17 @@
+extends baseEmail
+
+block content
+  p Hi #{firstName},
+  p Welcome to Kipchimchim Group, we're glad to have you
+  p Click on the "Reset Password" button below and you will be directed to a secure page where you can create a new password.
+  p Make sure to choose a strong and unique password to enhance the security of your account.
+  table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td
+                  a(href=`${url}`, target='_blank') Reset password
+  p If you didn't forget your password, please ignore this email!
