@@ -37,7 +37,7 @@ const withRetry = async (
 };
 
 cron.schedule(
-  '*/9 * * * *',
+  '0 * * * *',
   async () => {
     console.log(`Fetching transaction "Kilos" from Ifetch`);
     const today = new Date();

@@ -161,7 +161,7 @@ exports.loanRequest = catchAsync(async (req, res, next) => {
     //   process.env.B2C_LOAN_RESULT_URL,
     // );
     const response = {
-      ConversationID: 'AG_20191219_00005797af5d7d75f65290',
+      ConversationID: 'AG_20191219_00005797af5d7d75f652901',
       OriginatorConversationID: '16740-34861180-1',
       ResponseCode: '0',
       ResponseDescription: 'Accept the service request successfully.',
@@ -257,7 +257,7 @@ exports.loanRequestCallback = async (req, res, next) => {
 
     // Update Transaction record
     await Transaction.updateOne(
-      { transactionId },
+      { transactionQueueId: queue._id },
       {
         $set: {
           status: 'completed',
