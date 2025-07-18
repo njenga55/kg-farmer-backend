@@ -1,11 +1,16 @@
 const moment = require('moment');
 const Transaction = require('./../models/transactionModel');
 const Kilo = require('./../models/kiloModel');
+const Wallet = require('./../models/walletModel');
 const Farmer = require('./../models/farmerModel');
 const User = require('./../models/userModel');
 const Paybill = require('./../models/paybillModel');
 const catchAsync = require('./../utils/catchAsync');
 const MpesaB2cAPI = require('./../utils/mpesaB2c');
+const Automation = require('./../models/automationModel');
+const TransactionQueue = require('./../models/transactionQueueModel');
+const { logActivity } = require('./activityLoggerController');
+const  {fetchAndProcessTransactions}  = require('../job/transactionsJob');
 
 // Instantiate mpesa the b2c loan service
 const mpesaB2cService = new MpesaB2cAPI(
@@ -106,3 +111,26 @@ exports.getFarmerStats = catchAsync(async (req, res, next) => {
     revenueBreakDown,
   });
 });
+exports.resetApplicationData = catchAsync(async (req, res, next) => {
+  await Kilo.deleteMany({});
+  await Wallet.deleteMany({});
+  await logActivity(req, 'application_data_reset', 'success', {
+    by: req.user,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    message:  'Kilos and Wallet reset reset',
+  });
+});
+exports.syncData = catchAsync(async (req, res, next) => {
+  await logActivity(req, 'manual sync initiated', 'success', {
+    by: req.user,
+  });
+    fetchAndProcessTransactions();
+  res.status(200).json({
+    status: 'success',
+    message:  'manual sync initiated successfully',
+  });
+});
+

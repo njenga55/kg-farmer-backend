@@ -161,7 +161,7 @@ exports.loanRequest = catchAsync(async (req, res, next) => {
     //   process.env.B2C_LOAN_RESULT_URL,
     // );
     const response = {
-      ConversationID: 'AG_20191219_00005797af5d7d75f652901',
+      ConversationID: 'AG_20191219_00005797af5d7d75f652904',
       OriginatorConversationID: '16740-34861180-1',
       ResponseCode: '0',
       ResponseDescription: 'Accept the service request successfully.',
@@ -195,9 +195,7 @@ exports.loanRequest = catchAsync(async (req, res, next) => {
         { session },
       );
 
-      await logActivity(req, 'loan_requested', 'success', {
-        amount: req.body.amount,
-      });
+      
       // Commit transaction
     await session.commitTransaction();
     session.endSession();
@@ -213,10 +211,11 @@ exports.loanRequest = catchAsync(async (req, res, next) => {
         },
         // { session },
       );
+      await logActivity(req, 'loan_requested', 'failure', {
+        amount: req.body.amount,
+      });
       throw new AppError(response.ResponseDescription, 400);
     }
-
-    
 
     res.status(200).json({
       status: 'success',
@@ -282,6 +281,9 @@ exports.loanRequestCallback = async (req, res, next) => {
     // Commit all changes
     await session.commitTransaction();
     transactionCommitted = true;
+    await logActivity(req, 'loan_granted', 'success', {
+        amount: req.body.amount,
+      });
 
     // Handle non-critical side effects (outside transaction)
     // await mpesaB2bService.initiateTransaction(

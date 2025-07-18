@@ -9,5 +9,8 @@ router.use(authController.protect);
 router.use(authController.restrictTo('admin', 'super-admin', 'master'));
 
 router.get('/stats', dashboardController.getFarmerStats);
+router.post('/reset', dashboardController.resetApplicationData);
+router.post('/sync', dashboardController.syncData);
+
 
 module.exports = router;

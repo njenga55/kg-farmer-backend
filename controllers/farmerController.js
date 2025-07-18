@@ -2,6 +2,8 @@ const Farmer = require('./../models/farmerModel');
 const Kilo = require('./../models/kiloModel');
 const Wallet = require('./../models/walletModel');
 const Automation = require('./../models/automationModel');
+const Transaction = require('./../models/transactionModel');
+const TransactionQueue = require('./../models/transactionQueueModel');
 const { fetchAndSaveKilosInBatches } = require('./ifetchController');
 const factory = require('./handlerFactory');
 const catchAsync = require('./../utils/catchAsync');
@@ -19,13 +21,10 @@ exports.createFarmer = catchAsync(async (req, res, next) => {
 
 exports.getFarmerStats = catchAsync(async (req, res, next) => {
   // Get the current count of farmer's kilos in the database
-  let user = {
-    _id: "6874a55c1c84ef1d882683f8",
-    farmerCode: "0329541527",
+  const user = req.user;
+  if (!user) {
+    return next(new Error('User not found'));
   }
-
-  console.log('Fetching kilos for farmer:', user.farmerCode);
-
   
   const dbKiloCount = await Kilo.countDocuments({ farmer:user._id });
   // const automation = await Automation.findOne();
@@ -57,8 +56,10 @@ exports.getFarmerStats = catchAsync(async (req, res, next) => {
   });
 });
 
+
 // exports.createFarmer = factory.createOne(Farmer);
 exports.getFarmer = factory.getOne(Farmer);
 exports.getAllFarmers = factory.getAll(Farmer);
 exports.updateFarmer = factory.updateOne(Farmer);
 exports.deleteFarmer = factory.deleteOne(Farmer);
+
